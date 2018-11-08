@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<template>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -63,5 +63,64 @@
 
 
 </body>
-
 </html>
+
+</template>
+
+
+
+<style type="text/css">
+.re-form {
+        width: 960px;
+        margin: 100px auto;
+    }
+    .re-form form {
+        margin-bottom: 15px;
+        background: #f7f7f7;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+        padding: 75px;
+    }
+    .re-form h2 {
+        margin: 0 0 15px;
+    }
+    .re-form-control, .btn {
+        min-height: 38px;
+        border-radius: 2px;
+    }
+    .btn {        
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+</style>
+
+
+
+<script type="text/javascript">
+export default {
+    name: 'app',
+    data () {
+        return {
+            user: {
+                firstName: '',
+                lastName: '',
+                email: '',
+                password: ''
+            },
+            submitted: false
+        }
+    },
+    methods: {
+        handleSubmit(e) {
+            this.submitted = true;
+            this.$validator.validate().then(valid => {
+                if (valid) {
+                    alert('SUCCESS!! :-)\n\n' + JSON.stringify(this.user))
+                }
+            });
+        }
+    }
+};
+
+
+</script>
