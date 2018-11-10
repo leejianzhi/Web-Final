@@ -1,5 +1,2 @@
-static-html/node_modules
 
-express-server/node_modules/
-static-html/css/style.css
-Web-Final/
+.idea/workspace.xml

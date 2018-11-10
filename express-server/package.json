@@ -1,14 +1,28 @@
 {
   "name": "express-server",
   "version": "1.0.0",
-  "description": "social network server side",
-  "main": "index.js",
+  "description": "serverside of postify social network",
+  "main": "server.js",
+  "dependencies": {
+    "bcrypt": "^3.0.2",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "gravatar": "^1.6.0",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.3.9",
+    "morgan": "^1.9.1",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.9.0",
+    "eslint-config-google": "^0.11.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Eric Liu",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.16.4"
-  }
+  "author": "Eric Liu, Jianzhi Li, Ziqi Tang",
+  "license": "GPL-3.0"
 }
