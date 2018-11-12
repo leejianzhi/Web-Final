@@ -11,11 +11,6 @@ const app = express();
 app.use(morgan('combined'));
 
 app.use(cors());
-
-app.get("/",(req,res)=>{
-
-	res.send("Hello World");
-})
 // require routers
 const users = require("./routes/api/users");
 const profiles = require("./routes/api/profiles");
