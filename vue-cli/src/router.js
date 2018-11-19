@@ -2,15 +2,13 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Profile from './views/Profile'
 import Register from './views/Register'
-import Nofind from './views/404'
-
 import Register1 from '@/components/Register1'
 import Register2 from '@/components/Register2'
-import Register3 from '@/components/Register3'
 
 Vue.use(Router)
 
 const router = new Router({
+  base: process.env.BASE_URL,
   routes: [
     {
       path: '/',
@@ -24,7 +22,65 @@ const router = new Router({
     {
       path: '/profile',
       name: 'profile',
-      component: Profile
+      component: Profile,
+      meta: {
+        login_require: true
+      },
+      children: [
+        {
+          path: '',
+          redirect: 'feeds'
+        },
+        {
+          path: 'feeds',
+          name: 'feeds',
+          component: () => import('./components/ProfileFeed')
+        },
+        {
+          path: 'followers',
+          name: 'followers',
+          component: () => import('./components/ProfileFollower')
+        },
+        {
+          path: 'followings',
+          name: 'followings',
+          component: () => import('./components/ProfileFollowing')
+        },
+        {
+          path: 'friends',
+          name: 'friends',
+          component: () => import('./components/Friends')
+        }
+      ]
+    },
+    {
+      path: '/setting',
+      name: 'setting',
+      meta: {
+        login_require: true
+      },
+      component: () => import('./views/Setting'),
+      children: [
+        {
+          path: '',
+          redirect: 'account'
+        },
+        {
+          path: 'account',
+          name: 'account',
+          component: () => import('./components/SettingAccount')
+        },
+        {
+          path: 'pass',
+          name: 'pass',
+          component: () => import('./components/SettingPass')
+        },
+        {
+          path: 'user',
+          name: 'user',
+          component: () => import('./components/SettingUser')
+        }
+      ]
     },
     {
       path: '/login',
@@ -38,7 +94,7 @@ const router = new Router({
       children: [
         {
           path: '',
-          redirect: '/step1'
+          redirect: 'step1'
         },
         {
           path: 'step1',
@@ -49,11 +105,6 @@ const router = new Router({
           path: 'step2',
           name: 'register2',
           component: Register2
-        },
-        {
-          path: 'step3',
-          name: 'register3',
-          component: Register3
         }
       ]
     },
@@ -68,10 +119,12 @@ const router = new Router({
 // routes guradiance
 router.beforeEach((to, from, next) => {
   const isLogin = !!localStorage.postifyToken
-  if (to.path == '/login' || to.path == '/register') {
-    next()
-  } else {
+  if (to.matched.some(function (item) {
+    return item.meta.login_require
+  })) {
     isLogin ? next() : next('/login')
+  } else {
+    next()
   }
 })
 

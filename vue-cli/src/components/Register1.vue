@@ -14,10 +14,10 @@
             <el-input placeholder="Username" v-model="registerForm.username"></el-input>
         </el-form-item>
         <el-form-item label-width="0" prop="password">
-            <el-input placeholder="Password" v-model="registerForm.password"></el-input>
+            <el-input type="password" placeholder="Password" v-model="registerForm.password"></el-input>
         </el-form-item>
         <el-form-item label-width="0" prop="password2">
-            <el-input placeholder="Confirm Password" v-model="registerForm.password2"></el-input>
+            <el-input type="password" placeholder="Confirm Password" v-model="registerForm.password2"></el-input>
         </el-form-item>
         <el-form-item label-width="0">
             <el-checkbox>I Agree with Privacy Policy</el-checkbox>
@@ -38,13 +38,16 @@
             if (valid) {
               this.$axios.post('/api/users/register/step1', this.registerForm)
                 .then((res) => {
-                  this.message({
+                  this.$message({
                     message: 'Register Successfully',
                     type: 'success'
                   })
+                  this.$store.state.rstep.step = 2
+                  this.$store.state.ruser.register = res.data
+                  this.$router.push('/register/step2')
+                  console.log(res.data)
                 })
             }
-            this.$router.push('/register/step2')
           })
         }
       },
@@ -106,10 +109,12 @@
               { validator: checkEmail, trigger: 'blur' }
             ],
             password: [
-              { validator: checkPass, trigger: 'blur' }
+              { validator: checkPass, trigger: 'blur' },
+              { min: 5, max: 20, trigger: 'blur' }
             ],
             password2: [
-              { validator: checkPass2, trigger: 'blur' }
+              { validator: checkPass2, trigger: 'blur' },
+              { min: 5, max: 20, trigger: 'blur' }
             ]
           }
 

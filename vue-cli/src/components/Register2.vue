@@ -1,15 +1,12 @@
 <template>
     <div class="register">
-        <el-form :model="hobbyForm">
-            <el-tag
-                v-for="hobby in hobbies"
-                :key="hobby.name"
-                class="mx-2 my-2">
-                <el-checkbox :label="hobby.name" @change="addHobby"></el-checkbox>
-            </el-tag>
-            <div class="text-center mt-4">
-                <el-button @click="skip">Skip</el-button>
-                <el-button type="primary" @click="submit"  :disabled="isDisabled">Submit</el-button>
+        <el-form>
+            <el-checkbox-group v-model="checkedHobby">
+              <el-checkbox v-for="hobby in hobbyList" :label="hobby" :key="hobby">{{hobby}}</el-checkbox>
+            </el-checkbox-group>
+            <div class="text-center">
+              <el-button @click="skip">Skip</el-button>
+              <el-button @click="submit" type="primary">Submit</el-button>
             </div>
         </el-form>
     </div>
@@ -20,39 +17,40 @@
       name: 'register-step2',
       methods: {
         skip: function () {
-          this.$emit('next-step')
           this.$router.push({
-            path: 'step3'
+            path: '/login'
           })
+          this.$store.state.rstep.step = 1
         },
         submit: function () {
-          this.$router.push({
-            path: 'step3'
-          })
-          this.$emit('next-step')
-        },
-        addHobby: function (value) {
-          this.hobbyForm.hobbies.push({
-            name: value
-          })
+          if (this.checkedHobby) {
+            this.user = this.$store.getters.register
+            this.user.hobbies = this.checkedHobby
+            this.$axios.post('/api/users/register/step2', this.user)
+              .then((res) => {
+                this.$message({
+                  message: 'Submit Successfully',
+                  type: 'success'
+                })
+                this.$router.push({
+                  path: '/login'
+                })
+                this.$store.state.rstep.step = 1
+                console.log(this.user)
+              })
+          }
         }
       },
       data () {
         return {
-          hobbies: [
-            { name: 'Hiphop' },
-            { name: 'Pop' },
-            { name: 'Classical' },
-            { name: 'Jazz' }
-          ],
-          hobbyForm: {
-            hobbies: []
-          }
+          hobbyList: ['Hip-hop', 'Pop', 'Classical', 'Jazz'],
+          checkedHobby: [],
+          user: {}
         }
       },
       computed: {
         isDisabled () {
-          if (this.hobbyForm.hobbies !== []) return false
+          if (this.checkedHobby !== []) return false
           else return true
         }
       }

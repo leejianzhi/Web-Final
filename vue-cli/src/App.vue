@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <nav-bar></nav-bar>
-    <router-view></router-view>
+    <router-view :user="user"></router-view>
   </div>
 </template>
 
@@ -24,10 +24,15 @@ import jwt_decode from 'jwt-decode'
 export default {
   name: 'app',
   created () {
-    if (localStorage.postifyTokenß) {
+    if (localStorage.postifyToken) {
       const decode = jwt_decode(localStorage.postifyToken)
       this.$store.dispatch('setIsAutnenticated', !this.isEmpty(decode))
       this.$store.dispatch('setUser', decode)
+
+      this.$axios.post('/api/profiles/info', this.$store.getters.user)
+        .then(res => {
+          this.user = res.data
+        })
     }
   },
   methods: {
@@ -42,6 +47,11 @@ export default {
   },
   components: {
     'nav-bar': Navbar
+  },
+  data () {
+    return {
+      user: {}
+    }
   }
 }
 </script>
