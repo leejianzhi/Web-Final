@@ -48,29 +48,7 @@ const userSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    //added by dz
-    feed_post: [{
-
-        type: Schema.Types.ObjectId,
-        ref: 'feeds'
-    }],
-
-    friendships: {
-
-        followers:[{
-
-            type: Schema.Types.ObjectId,
-            ref: 'User'
-        }],
-
-        following:[{
-
-            type: Schema.Types.ObjectId,
-            ref: 'User'
-        }]
-
-
-    }
+    
 })
 
 module.exports = User = mongoose.model("users", userSchema);

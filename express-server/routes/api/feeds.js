@@ -3,6 +3,8 @@ const router = express.Router();
 const passport = require("passport");
 const key = require('../../config/key')
 
+
+
 const fs = require('fs');
 // 初始化Client
 const co = require('co');
@@ -23,7 +25,7 @@ var upload = multer({ dest: './tmp/' })
 
 const Feed = require("../../models/Feed")
 const User = require("../../models/User")
-const Followings = require("../../models/Following")
+const Following = require("../../models/Following")
 
 router.get("/test", (req, res) => {
     res.json({msg: "api works well"});
@@ -103,57 +105,65 @@ router.post('/upload', upload.single('file'), (req, res) => {
 })
 // $router /api/feeds/concern/latest
 //  Get latest feed by following id  from request
-router.get("/concern/latest", passport.authenticate("jwt", {session: false}), (req, res,next) => {
+router.get("/concern/latest/:user_id", passport.authenticate("jwt", {session: false}), (req, res,next) => {
 
 
 
 
+     
+     /*
+  
+      Following
+        .find({user_id:req.user.id},['following_id'])
+        .then(result => {})
 
-if (req.isAuthenticated()) {
+*/
+
       Feed
         .find({
-          user_id: {
-            $in: [{"author":0}].concat(Followings.following_id)
-          }
+          
+            user_id:req.follow.following_id
+          
         })
+
+
+
         .sort({ created_at: -1 })
-        .populate('Followings.following_id')
+        .populate('user_id')
         .exec(function(err, feeds) {
           if (err) return res.render("error", { error: err });
           if (feeds.length < 1) return res.render("Index");
 
           res.json(feeds)
-        });
-    } else {
-      res.render("Home");
-    }
-
+        })
+    
 
 })
 // $router /api/feeds/self/latest
 // get personal feed by user id from token (reference :user's router get current)
-router.get("/self/latest", passport.authenticate("jwt", {session: false}), (req, res, next) => {
+router.get("/self/latest/user:_id", passport.authenticate("jwt", {session: false}), (req, res, next) => {
 
     //check if the user login then bring the user to the personal home page which contains the self feeds
 
-if (req.isAuthenticated()) {
+
+
+
+
+
       Feed
         .find({
-          user_id: {
-            $in: [Feed.user_id].concat(Feed.id)
+          user_id:req.params.user_id
           }
-        })
+        )
         .sort({ created_at: -1 })
-        .populate("user_id")
+        .populate("Feed.user_id")
         .exec(function(err, feeds) {
           if (err) return res.render("error", { error: err });
           if (feeds.length < 1) return res.render("Index");
 
           res.json(feeds)
-        });
-    } else {
-      res.render("Home");
-    }
+        })
+  
 
 })
 
