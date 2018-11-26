@@ -28,6 +28,18 @@ const userSchema = new Schema({
     avatar: String,
     landing_img: String,
     hobbies: [String],
+    following_number:{
+        type: Number,
+        default: 0
+    },
+    follower_number :{
+        type: Number,
+        default: 0
+    },
+    feeds_number: {
+        type: Number,
+        default: 0
+    },
     created_at: {
         type: Date,
         default: Date.now
@@ -35,6 +47,29 @@ const userSchema = new Schema({
     update_at: {
         type: Date,
         default: Date.now
+    },
+    //added by dz
+    feed_post: [{
+
+        type: Schema.Types.ObjectId,
+        ref: 'feeds'
+    }],
+
+    friendships: {
+
+        followers:[{
+
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }],
+
+        following:[{
+
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }]
+
+
     }
 })
 
