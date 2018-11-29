@@ -26,10 +26,17 @@ var upload = multer({ dest: './tmp/' })
 const Feed = require("../../models/Feed")
 const User = require("../../models/User")
 const Following = require("../../models/Following")
+const Follower = require("../../models/Follower")
 
 router.get("/test", (req, res) => {
     res.json({msg: "api works well"});
 })
+
+let response = {
+      status:200,
+      data:[],
+      message:null
+}
 // $router /api/feeds/create POST
 router.post("/create", passport.authenticate("jwt", {session: false}), (req, res) => {
     console.log(req.body)
@@ -105,49 +112,44 @@ router.post('/upload', upload.single('file'), (req, res) => {
 })
 // $router /api/feeds/concern/latest
 //  Get latest feed by following id  from request
-router.get("/concern/latest/:user_id", passport.authenticate("jwt", {session: false}), (req, res,next) => {
+router.get("/concern/latest/:_id", passport.authenticate("jwt", {session: false}), (req, res,next) => {
 
 
 
 
-     
-     /*
   
-      Following
-        .find({user_id:req.user.id},['following_id'])
-        .then(result => {})
+        Feed.find({
 
-*/
-
-      Feed
-        .find({
-          
-            user_id:req.follow.following_id
-          
+            user_id:{
+              $in:[Following.following_id].concat(req.params.user_id)
+            }
         })
-
 
 
         .sort({ created_at: -1 })
-        .populate('user_id')
+        .populate("Feed.user_id")
         .exec(function(err, feeds) {
           if (err) return res.render("error", { error: err });
-          if (feeds.length < 1) return res.render("Index");
+          //if (feeds.length < 1) return res.render("Index");
 
           res.json(feeds)
         })
+
+      })
+  
+      
     
 
-})
+  
+
+
+
+
 // $router /api/feeds/self/latest
 // get personal feed by user id from token (reference :user's router get current)
-router.get("/self/latest/user:_id", passport.authenticate("jwt", {session: false}), (req, res, next) => {
+router.get("/self/latest/:user_id", passport.authenticate("jwt", {session: false}), (req, res, next) => {
 
     //check if the user login then bring the user to the personal home page which contains the self feeds
-
-
-
-
 
 
       Feed
@@ -168,6 +170,7 @@ router.get("/self/latest/user:_id", passport.authenticate("jwt", {session: false
 })
 
 // Get lasets feeds from recomment user_id from the req
+//currently this API will pull all the feeds, will modify it to a public account later
 router.get("/recommend/latest", passport.authenticate("jwt", {session: false}), (req, res) => {
 
 
